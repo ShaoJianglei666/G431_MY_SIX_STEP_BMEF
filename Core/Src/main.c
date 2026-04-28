@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "motor_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +58,16 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/* Motor control configuration */
+static const Motor_Config_T g_motor_config = {
+  .pwm_frequency = 15000,      /* 15 kHz PWM */
+  .dead_time_ns = 2000,        /* 2000 ns dead time */
+  .pole_pair_num = 2,          /* 2 pole pairs */
+  .min_speed_rpm = 100,        /* 100 RPM minimum */
+  .max_speed_rpm = 8000,       /* 8000 RPM maximum */
+  .acceleration_ramp = 100,    /* 100 ms acceleration ramp */
+};
 
 /* USER CODE END 0 */
 
@@ -98,6 +108,12 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  /* Initialize motor control module */
+  Motor_Init(&htim1, &g_motor_config);
+
+  /* Optional: Set initial PWM duty cycle */
+  Motor_SetDuty(50);  /* 50% duty cycle */
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,6 +123,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    /* Update motor control state machine */
+    Motor_Update();
+
+    /* Optional: Add a small delay to control loop rate */
+    HAL_Delay(1);  /* 1 ms loop rate */
+
+  /* USER CODE END 3 */
   }
   /* USER CODE END 3 */
 }
