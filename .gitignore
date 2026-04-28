@@ -1,0 +1,35 @@
+# Keil MDK build output
+*.axf
+*.d
+*.o
+*.crf
+*.htm
+*.lnp
+*.sct
+*.build_log.htm
+
+# Debug files
+*.uvguix.*
+Debug/
+.vscode/settings.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Build artifacts
+obj/
+out/
+bin/
+*.elf
+*.hex
+*.bin
