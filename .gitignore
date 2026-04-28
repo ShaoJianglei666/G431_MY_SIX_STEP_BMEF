@@ -1,0 +1,42 @@
+# STM32CubeIDE build output
+Debug/
+Release/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# Keil MDK
+*.axf
+*.htm
+*.sct
+*.dep
+Objects/
+Listings/
+RTE/
+
+# IAR
+*.ewt
+*.eww.backup
+*.xcl
+*.out
+Exe/
+Obj/
+List/
+Settings/
+
+# IDE metadata
+.settings/
+.metadata/
+*.launch
+*.cproject
+*.project.bak
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
