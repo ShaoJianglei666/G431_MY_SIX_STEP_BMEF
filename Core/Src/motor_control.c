@@ -46,7 +46,7 @@ static uint16_t g_comm_delay_timer = 0;
 /* Six-step commutation pattern table */
 /* Format: {UH, VH, WH, UL, VL, WL} */
 /* ON=1, OFF=0 */
-static const struct
+typedef struct
 {
   uint8_t uh;
   uint8_t vh;
@@ -54,7 +54,9 @@ static const struct
   uint8_t ul;
   uint8_t vl;
   uint8_t wl;
-} g_commutation_table[6] =
+} Commutation_Pattern_T;
+
+static const Commutation_Pattern_T g_commutation_table[6] =
 {
   /* SECTOR_0 */
   {.uh = 1, .vh = 0, .wh = 0, .ul = 0, .vl = 0, .wl = 1},  /* UH-WL on */

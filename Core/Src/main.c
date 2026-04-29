@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "motor_control.h"
+#include "serial_protocol.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,6 +70,21 @@ static const Motor_Config_T g_motor_config = {
   .acceleration_ramp = 100,    /* 100 ms acceleration ramp */
 };
 
+/* Periodic telemetry transmission handler - low coupling design */
+static void TelemetryUpdate(void)
+{
+  static uint32_t last_send_time = 0;
+  const uint32_t TELEMETRY_INTERVAL = 500;  /* 500ms interval */
+  
+  uint32_t current_time = HAL_GetTick();
+  
+  if ((current_time - last_send_time) >= TELEMETRY_INTERVAL)
+  {
+    last_send_time = current_time;
+    SerialProtocol_SendHello();
+  }
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -108,6 +124,9 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  /* Initialize serial protocol module for UART2 communication */
+  SerialProtocol_Init();
+
   /* Initialize motor control module */
   Motor_Init(&htim1, &g_motor_config);
 
@@ -126,6 +145,9 @@ int main(void)
 
     /* Update motor control state machine */
     Motor_Update();
+
+    /* Handle periodic telemetry transmission (500ms interval) */
+    TelemetryUpdate();
 
     /* Optional: Add a small delay to control loop rate */
     HAL_Delay(1);  /* 1 ms loop rate */

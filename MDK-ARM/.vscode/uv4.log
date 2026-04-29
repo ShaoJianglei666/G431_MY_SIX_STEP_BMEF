@@ -1,13 +1,2 @@
-*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_5\ARM\ARMCC\Bin'
-Build target 'G431_MY_SIX_STEP_BMEF'
-compiling motor_control.c...
-..\Core\Src\motor_control.c(349): error:  #144: a value of type "struct <unnamed>" cannot be used to initialize an entity of type "struct <unnamed>"
-    } pattern = g_commutation_table[g_current_sector];
-..\Core\Src\motor_control.c(29): warning:  #550-D: variable "g_motor_config"  was set but never used
-  static Motor_Config_T g_motor_config;
-..\Core\Src\motor_control.c(44): warning:  #177-D: variable "g_comm_delay_timer"  was declared but never referenced
-  static uint16_t g_comm_delay_timer = 0;
-..\Core\Src\motor_control.c: 2 warnings, 1 error
-"G431_MY_SIX_STEP_BMEF\G431_MY_SIX_STEP_BMEF.axf" - 1 Error(s), 2 Warning(s).
-Target not created.
-Build Time Elapsed:  00:00:02
+Load "G431_MY_SIX_STEP_BMEF\\G431_MY_SIX_STEP_BMEF.axf" 
+Erase Done.Programming Done.Verify OK.Flash Load finished at 10:09:37

@@ -28,7 +28,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
-#include <stdint.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -95,11 +94,10 @@ void Error_Handler(void);
 #define UART_TX_GPIO_Port GPIOB
 #define UART_RX_Pin GPIO_PIN_4
 #define UART_RX_GPIO_Port GPIOB
-#define LED_Pin GPIO_PIN_5
-#define LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define LED_GPIO_Port GPIOB
+#define LED_Pin GPIO_PIN_5
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
