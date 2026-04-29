@@ -81,7 +81,8 @@ static void TelemetryUpdate(void)
   if ((current_time - last_send_time) >= TELEMETRY_INTERVAL)
   {
     last_send_time = current_time;
-    SerialProtocol_SendHello();
+    Motor_Status_T bemf = Motor_GetBEMFReadings();
+    SerialProtocol_SendBEMF(bemf.bemf_u, bemf.bemf_v, bemf.bemf_w);
   }
 }
 
@@ -131,7 +132,7 @@ int main(void)
   Motor_Init(&htim1, &g_motor_config);
 
   /* Optional: Set initial PWM duty cycle */
-  Motor_SetDuty(50);  /* 50% duty cycle */
+  Motor_SetDuty(15);  /* 50% duty cycle */
 
   /* USER CODE END 2 */
 

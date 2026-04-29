@@ -14,6 +14,7 @@
 #include "motor_control.h"
 #include "main.h"
 #include "tim.h"
+#include "adc.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -35,7 +36,7 @@ static Motor_Status_T g_motor_status;
 static TIM_HandleTypeDef *g_htim1 = NULL;
 
 /** Current PWM duty cycle (0-10000, where 10000 = 100%) */
-static uint16_t g_pwm_duty = 5000;  /* Default 50% */
+static uint16_t g_pwm_duty = 1500;  /* Default 50% */
 
 /** Zero-crossing detection counter */
 static uint16_t g_zc_stable_count = 0;
@@ -59,11 +60,11 @@ typedef struct
 static const Commutation_Pattern_T g_commutation_table[6] =
 {
   /* SECTOR_0 */
-  {.uh = 1, .vh = 0, .wh = 0, .ul = 0, .vl = 0, .wl = 1},  /* UH-WL on */
-  /* SECTOR_1 */
   {.uh = 1, .vh = 0, .wh = 0, .ul = 0, .vl = 1, .wl = 0},  /* UH-VL on */
+  /* SECTOR_1 */
+  {.uh = 1, .vh = 0, .wh = 0, .ul = 0, .vl = 0, .wl = 1},  /* UH-WL on */
   /* SECTOR_2 */
-  {.uh = 0, .vh = 1, .wh = 0, .ul = 0, .vl = 1, .wl = 0},  /* VH-VL on */
+  {.uh = 0, .vh = 1, .wh = 0, .ul = 0, .vl = 0, .wl = 1},  /* VH-WL on */
   /* SECTOR_3 */
   {.uh = 0, .vh = 1, .wh = 0, .ul = 1, .vl = 0, .wl = 0},  /* VH-UL on */
   /* SECTOR_4 */
@@ -202,25 +203,20 @@ void Motor_SetSector(Motor_Sector_E sector)
 
 void Motor_ReadBEMF(void)
 {
-  /* Note: This function should be called when ADC conversion completes
-   * In this implementation, we use the raw ADC values directly
-   * In a real system, you would read from ADC1 injected conversion results
-   */
+  uint32_t raw_u = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+  uint32_t raw_v = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_2);
+  uint32_t raw_w = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_3);
 
-  /* Placeholder: Read from ADC results
-   * In production code, integrate with your ADC interrupt handler
-   * Example (pseudo-code):
-   *
-   * uint16_t adc_results[3];
-   * if (ADC_GetInjectedResults(adc_results) == HAL_OK) {
-   *   g_motor_status.bemf_u = adc_results[0];
-   *   g_motor_status.bemf_v = adc_results[1];
-   *   g_motor_status.bemf_w = adc_results[2];
-   * }
-   */
+  if (hadc1.Init.DataAlign == ADC_DATAALIGN_LEFT)
+  {
+    raw_u >>= 4;
+    raw_v >>= 4;
+    raw_w >>= 4;
+  }
 
-  /* For now, using placeholder values (user should implement ADC reading) */
-  /* This is a test point - values will be updated via Motor_SetBEMFValues() */
+  g_motor_status.bemf_u = (uint16_t)raw_u;
+  g_motor_status.bemf_v = (uint16_t)raw_v;
+  g_motor_status.bemf_w = (uint16_t)raw_w;
 }
 
 uint8_t Motor_DetectZeroCrossing(void)
@@ -257,7 +253,7 @@ void Motor_SetDuty(uint8_t duty_percent)
 {
   if (duty_percent > 100)
   {
-    duty_percent = 100;
+    duty_percent = 95;
   }
 
   /* Convert percentage to counter value (0-10000 represents 0-100%) */
