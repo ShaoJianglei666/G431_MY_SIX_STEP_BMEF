@@ -61,30 +61,6 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 /* Motor control configuration */
-static const Motor_Config_T g_motor_config = {
-  .pwm_frequency = 15000,      /* 15 kHz PWM */
-  .dead_time_ns = 2000,        /* 2000 ns dead time */
-  .pole_pair_num = 2,          /* 2 pole pairs */
-  .min_speed_rpm = 100,        /* 100 RPM minimum */
-  .max_speed_rpm = 8000,       /* 8000 RPM maximum */
-  .acceleration_ramp = 100,    /* 100 ms acceleration ramp */
-};
-
-/* Periodic telemetry transmission handler - low coupling design */
-static void TelemetryUpdate(void)
-{
-  static uint32_t last_send_time = 0;
-  const uint32_t TELEMETRY_INTERVAL = 500;  /* 500ms interval */
-  
-  uint32_t current_time = HAL_GetTick();
-  
-  if ((current_time - last_send_time) >= TELEMETRY_INTERVAL)
-  {
-    last_send_time = current_time;
-    Motor_Status_T bemf = Motor_GetBEMFReadings();
-    SerialProtocol_SendBEMF(bemf.bemf_u, bemf.bemf_v, bemf.bemf_w);
-  }
-}
 
 /* USER CODE END 0 */
 
@@ -125,15 +101,6 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  /* Initialize serial protocol module for UART2 communication */
-  SerialProtocol_Init();
-
-  /* Initialize motor control module */
-  Motor_Init(&htim1, &g_motor_config);
-
-  /* Optional: Set initial PWM duty cycle */
-  Motor_SetDuty(15);  /* 50% duty cycle */
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -143,16 +110,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-    /* Update motor control state machine */
-    Motor_Update();
-
-    /* Handle periodic telemetry transmission (500ms interval) */
-    TelemetryUpdate();
-
-    /* Optional: Add a small delay to control loop rate */
-    HAL_Delay(1);  /* 1 ms loop rate */
-
   /* USER CODE END 3 */
   }
   /* USER CODE END 3 */

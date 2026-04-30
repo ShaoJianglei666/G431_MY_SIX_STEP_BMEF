@@ -52,39 +52,6 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-static uint32_t g_last_button_time = 0;  /* Debounce timer */
-#define DEBOUNCE_MS 50  /* Button debounce time */
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if (GPIO_Pin == Start_Stop_Pin)
-  {
-    /* Simple debounce: check if enough time has passed */
-    uint32_t current_time = HAL_GetTick();
-    if ((current_time - g_last_button_time) < DEBOUNCE_MS)
-    {
-      return;
-    }
-    g_last_button_time = current_time;
-
-    /* Get current motor state and toggle */
-    Motor_Status_T status = Motor_GetStatus();
-    if (status.state == MOTOR_STATE_IDLE)
-    {
-      /* Start motor */
-      Motor_Start();
-      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);  /* LED on */
-    }
-    else if (status.state == MOTOR_STATE_RUNNING)
-    {
-      /* Stop motor */
-      Motor_Stop();
-      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);    /* LED off */
-    }
-  }
-}
-
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
